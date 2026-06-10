@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pequeños Ingenieros - Plataforma Interactiva</title>
+    <style>
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #4ecdc4;
+            --dark-blue: #2f2fa2;
+            --accent: #ffe66d;
+            --bg-color: #f0f8ff;
+            --text-color: #333;
+            --success: #2ecc71;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        header h1 { margin: 0; font-size: 2.5rem; text-shadow: 2px 2px var(--dark-blue); }
+
+        nav {
+            background-color: var(--secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        
+        .user-status {
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-logout {
+            background-color: var(--primary);
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .auth-container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        .auth-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        .auth-card h2 {
+            margin-top: 0;
+            color: var(--dark-blue);
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn-submit { width: 100%; background-color: var(--secondary); color: white; border: none; padding: 12px; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+        .btn-submit:hover { background-color: #3dbdaf; }
+
+        .progress-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .progress-bar-container {
+            background-color: #eee;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 15px 0;
+            height: 25px;
+            width: 100%;
+        }
+        .progress-bar {
+            background-color: var(--success);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .info-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .info-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+        .info-card { flex: 1; min-width: 280px; background: #fff8d6; padding: 20px; border-radius: 8px; border-left: 5px solid var(--dark-blue); }
+
+        .tasks-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .task-item {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid #eee;
+            transition: all 0.3s ease;
+        }
+        .task-item.completed { border-color: var(--success); background: #e8fbf0; }
+        .task-header { display: flex; align-items: center; gap: 10px; font-size: 1.2rem; font-weight: bold; color: var(--dark-blue); }
+        .task-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        
+        .quiz-options { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .quiz-options label { background: white; padding: 8px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; display: block; }
+        .quiz-options input { margin-right: 10px; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>👷‍♂️ Pequeños Ingenieros 🚀</h1>
+        <p>¡Construyendo y aprendiendo el futuro!</p>
+    </header>
+
+    <nav>
+        <div class="nav-links">
+            <a href="#biblioteca">Biblioteca Informativa</a>
+            <a href="#tareas">Mis Tareas</a>
+        </div>
+        <div class="user-status" id="userStatus">🔒 No has iniciado sesión</div>
+    </nav>
+
+    <div class="container">
+        
+        <div id="authSection" class="auth-container">
+            
+            <div class="auth-card">
+                <h2>¿Eres Nuevo? Regístrate Aquí 🛠️</h2>
+                <div class="form-group">
+                    <label>Tu Nombre Completo:</label>
+                    <input type="text" id="regName" placeholder="Ej: Valentina López">
+                </div>
+                <div class="form-group">
+                    <label>Crea un Usuario (sin espacios):</label>
+                    <input type="text" id="regUser" placeholder="Ej: valen_robot">
+                </div>
+                <div class="form-group">
+                    <label>Crea tu Contraseña:</label>
+                    <input type="password" id="regPass" placeholder="Mínimo 4 caracteres">
+                </div>
+                <button type="button" onclick="registrarUsuarioNuevo()" class="btn-submit">Crear Mi Cuenta y Entrar 🚀</button>
+            </div>
+
+            <div class="auth-card">
+                <h2>¿Ya Tienes Cuenta? Ingresa 🔑</h2>
+                <div class="form-group">
+                    <label>Tu Usuario:</label>
+                    <input type="text" id="loginUser" placeholder="Tu usuario registrado">
+                </div>
+                <div class="form-group">
+                    <label>Tu Contraseña:</label>
+                    <input type="password" id="loginPass" placeholder="••••••••">
+                </div>
+                <button type="button" onclick="iniciarSesionExistente()" class="btn-submit">¡Entrar a mi Taller! 🔓</button>
+            </div>
+
+        </div>
+
+        <div id="mainContent" class="hidden">
+            
+            <div class="progress-box">
+                <h2>📊 Panel de Control de <span id="studentName">Invitado</span></h2>
+                <p>Completa las lecturas y tareas de abajo para subir tu nivel.</p>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <strong id="progressText">Tu Progreso: 0% Completado</strong>
+            </div>
+
+            <section class="info-section" id="biblioteca">
+                <h2>📚 Biblioteca Didáctica: ¿Qué es la Ingeniería?</h2>
+                <p>Antes de hacer tus tareas, lee estos datos súper importantes para convertirte en un experto:</p>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>🧱 Ingeniería Civil</h3>
+                        <p>Es la ciencia de diseñar y construir cosas gigantes que usamos todos los días como puentes, autopistas, edificios y presas de agua.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>🤖 Ingeniería Mecatrónica</h3>
+                        <p>¡Combina la mecánica y la electrónica! Gracias a ella podemos programar robots automáticos, brazos industriales y carros mecánicos autónomos.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>⚡ Las Estructuras estables</h3>
+                        <p>Para que un edificio no se caiga, los ingenieros usan la geometría. Los triángulos son las formas más fuertes y resistentes en la construcción.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tasks-section" id="tareas">
+                <h2>📋 Tareas y Desafíos Pendientes</h2>
+                
+                <div class="task-item" id="task1Box">
+                    <div class="task-header">
+                        <input type="checkbox" id="task1" onchange="actualizarProgreso()">
+                        <label for="task1">Desafío 1: Leer la Biblioteca informativa</label>
+                    </div>
+                    <p style="margin-left: 30px; color: #666;">¡Lee las tres tarjetas de arriba y marca esta casilla cuando termines!</p>
+                </div>
+
+                <div class="task-item" id="task2Box">
+                    <div class="task-header">
+                        <input type="checkbox" id="task2" disabled>
+                        <label for="task2">Desafío 2: Trivia Relámpago</label>
+                    </div>
+                    <div style="margin-left: 30px; margin-top: 10px;">
+                        <p><strong>¿Cuál es la forma geométrica más fuerte usada por los ingenieros civiles?</strong></p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="geoQuiz" value="incorrecto" onchange="verificarRespuesta(this)"> El Círculo</label>
+                            <label><input type="radio" name="geoQuiz" value="correcto" onchange="verificarRespuesta(this)"> El Triángulo ¡Es indeformable!</label>
+                            <label><input type="radio" name="geoQuiz" value="incorrecto" onchange="verificarRespuesta(this)"> El Cuadrado</label>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div> </div> <script>
+        // 1. Guardar nuevo usuario en el LocalStorage
+        function registrarUsuarioNuevo() {
+            const nombre = document.getElementById('regName').value.trim();
+            const usuario = document.getElementById('regUser').value.trim().toLowerCase();
+            const contrasena = document.getElementById('regPass').value.trim();
+
+            if (!nombre || !usuario || contrasena.length < 4) {
+                alert('⚠️ Por favor, llena todos los campos. La contraseña debe tener al menos 4 caracteres.');
+                return;
+            }
+
+            // Validar si el usuario ya existe
+            if (localStorage.getItem('ingeniero_' + usuario)) {
+                alert('⚠️ Este usuario ya está registrado. Intenta con otro o inicia sesión.');
+                return;
+            }
+
+            // Guardar objeto de datos del usuario
+            const datosUsuario = { nombre: nombre, pass: contrasena };
+            localStorage.setItem('ingeniero_' + usuario, JSON.stringify(datosUsuario));
+            
+            alert('🎉 ¡Cuenta creada con éxito! Bienvenido al equipo.');
+            ingresarAPlataforma(nombre);
+        }
+
+        // 2. Validar credenciales de inicio de sesión
+        function iniciarSesionExistente() {
+            const usuario = document.getElementById('loginUser').value.trim().toLowerCase();
+            const contrasena = document.getElementById('loginPass').value.trim();
+
+            const cuentaGuardada = localStorage.getItem('ingeniero_' + usuario);
+
+            if (!cuentaGuardada) {
+                alert('❌ El usuario no existe. ¡Por favor regístrate primero!');
+                return;
+            }
+
+            const datosCuenta = JSON.parse(cuentaGuardada);
+
+            if (datosCuenta.pass === contrasena) {
+                ingresarAPlataforma(datosCuenta.nombre);
+            } else {
+                alert('🔒 Contraseña incorrecta. ¡Vuelve a intentarlo!');
+            }
+        }
+
+        // 3. Transición estética a la plataforma activa
+        function ingresarAPlataforma(nombreEstudiante) {
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            document.getElementById('studentName').innerText = nombreEstudiante;
+            
+            // Colocar nombre y botón de salida en la barra de navegación
+            document.getElementById('userStatus').innerHTML = `👷‍♂️ ¡Hola, ${nombreEstudiante}! <button class="btn-logout" onclick="cerrarSesion()">Salir</button>`;
+        }
+
+        // 4. Salir de la cuenta y reiniciar la vista
+        function cerrarSesion() {
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('userStatus').innerText = "🔒 No has iniciado sesión";
+            
+            // Limpiar inputs de sesión
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+            
+            // Resetear tareas y progreso
+            document.getElementById('task1').checked = false;
+            document.getElementById('task2').checked = false;
+            
+            const radios = document.getElementsByName('geoQuiz');
+            radios.forEach(radio => radio.checked = false);
+
+            actualizarProgreso();
+        }
+
+        // 5. Validar la respuesta de la trivia interactiva
+        function verificarRespuesta(radioSelected) {
+            const casillaTarea2 = document.getElementById('task2');
+            
+            if (radioSelected.value === "correcto") {
+                casillaTarea2.checked = true;
+                alert("🎉 ¡Excelente respuesta! El triángulo es la única figura geométrica que no se deforma cuando se le aplica fuerza.");
+            } else {
+                casillaTarea2.checked = false;
+                alert("❌ ¡Oh, no! Inténtalo de nuevo. Recuerda lo que leíste en la sección de Estructuras Estables.");
+            }
+            actualizarProgreso();
+        }
+
+        // 6. Calcular barra de progreso y cambiar colores dinámicamente
+        function actualizarProgreso() {
+            const t1 = document.getElementById('task1').checked;
+            const t2 = document.getElementById('task2').checked;
+            
+            // Cambiar estilos visuales de las tarjetas si están completadas
+            if (t1) document.getElementById('task1Box').classList.add('completed');
+            else document.getElementById('task1Box').classList.remove('completed');
+            
+            if (t2) document.getElementById('task2Box').classList.add('completed');
+            else document.getElementById('task2Box').classList.remove('completed');
+
+            // Calcular porcentaje matemático
+            let tareasLogradas = 0;
+            if (t1) tareasLogradas++;
+            if (t2) tareasLogradas++;
+
+            const porcentajeFinal = (tareasLogradas / 2) * 100;
+
+            // Renderizar en el HTML
+            document.getElementById('progressBar').style.width = porcentajeFinal + '%';
+            document.getElementById('progressText').innerText = `Tu Progreso: ${porcentajeFinal}% Completado`;
+        }
+    </script>
+</body>
+</html>
